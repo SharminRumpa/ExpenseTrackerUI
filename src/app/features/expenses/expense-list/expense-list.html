@@ -1,0 +1,61 @@
+<div class="page-header">
+  <h1>Expenses</h1>
+  <a routerLink="/expenses/new" class="btn-primary">+ Add Expense</a>
+</div>
+
+<div class="filters">
+  <select [(ngModel)]="filter.categoryId" (ngModelChange)="onFilterChange()">
+    <option [ngValue]="undefined">All Categories</option>
+    @for (cat of categories(); track cat.id) {
+      <option [ngValue]="cat.id">{{ cat.name }}</option>
+    }
+  </select>
+
+  <input type="date" [(ngModel)]="filter.fromDate" (ngModelChange)="onFilterChange()" placeholder="From" />
+  <input type="date" [(ngModel)]="filter.toDate" (ngModelChange)="onFilterChange()" placeholder="To" />
+  <input type="text" [(ngModel)]="filter.search" (ngModelChange)="onFilterChange()" placeholder="Search description..." />
+
+  <button class="btn-secondary" (click)="clearFilters()">Clear</button>
+</div>
+
+<div class="panel">
+  @if (isLoading()) {
+    <p>Loading...</p>
+  } @else if (expenses().length === 0) {
+    <p class="empty">No expenses found. Try adjusting your filters or add a new expense.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Date</th>
+          <th class="amount-col">Amount</th>
+          <th class="actions-col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (exp of expenses(); track exp.id) {
+          <tr>
+            <td><span class="category-badge">{{ exp.categoryName }}</span></td>
+            <td>{{ exp.description || '—' }}</td>
+            <td>{{ exp.expenseDate | date:'MMM d, y' }}</td>
+            <td class="amount-col">৳{{ exp.amount | number:'1.0-2' }}</td>
+            <td class="actions-col">
+              @if (deletingId() === exp.id) {
+                <span class="confirm-delete">
+                  Delete?
+                  <button class="link-danger" (click)="deleteExpense(exp.id)">Yes</button>
+                  <button class="link" (click)="cancelDelete()">No</button>
+                </span>
+              } @else {
+                <a [routerLink]="['/expenses', exp.id, 'edit']" class="link">Edit</a>
+                <button class="link-danger" (click)="confirmDelete(exp.id)">Delete</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

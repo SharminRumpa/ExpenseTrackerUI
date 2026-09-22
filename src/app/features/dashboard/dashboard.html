@@ -1,0 +1,59 @@
+<h1>Dashboard</h1>
+
+@if (isLoading()) {
+  <p>Loading...</p>
+} @else {
+  <div class="summary-cards">
+    <div class="card">
+      <span class="label">This Month</span>
+      <span class="value">৳{{ report()?.totalExpense | number:'1.0-2' }}</span>
+    </div>
+    <div class="card">
+      <span class="label">Transactions</span>
+      <span class="value">{{ totalCount() }}</span>
+    </div>
+    <div class="card">
+      <span class="label">Top Category</span>
+      <span class="value">{{ report()?.categories?.[0]?.categoryName ?? '—' }}</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Category Breakdown</h2>
+    @if (report()?.categories?.length) {
+      <div class="bar-chart">
+        @for (cat of report()?.categories; track cat.categoryId) {
+          <div class="bar-row">
+            <span class="bar-label">{{ cat.categoryName }}</span>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="(cat.total / maxCategoryTotal()) * 100"></div>
+            </div>
+            <span class="bar-value">৳{{ cat.total | number:'1.0-2' }} ({{ cat.percentage }}%)</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="empty">No expenses recorded this month yet.</p>
+    }
+  </div>
+
+  <div class="panel">
+    <h2>Recent Expenses</h2>
+    @if (recentExpenses().length) {
+      <table>
+        <tbody>
+          @for (exp of recentExpenses(); track exp.id) {
+            <tr>
+              <td>{{ exp.categoryName }}</td>
+              <td>{{ exp.description || '—' }}</td>
+              <td class="amount">৳{{ exp.amount | number:'1.0-2' }}</td>
+              <td class="date">{{ exp.expenseDate | date:'MMM d' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="empty">No recent expenses.</p>
+    }
+  </div>
+}

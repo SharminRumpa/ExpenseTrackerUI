@@ -1,0 +1,40 @@
+<div class="auth-container">
+  <form class="auth-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h1>Expense Tracker</h1>
+    <p class="subtitle">Create your account</p>
+
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <label>
+      Name
+      <input type="text" formControlName="name" placeholder="Sharmin Akter" />
+      @if (form.get('name')?.touched && form.get('name')?.invalid) {
+        <span class="field-error">Name must be at least 2 characters.</span>
+      }
+    </label>
+
+    <label>
+      Email
+      <input type="email" formControlName="email" placeholder="you@example.com" />
+      @if (form.get('email')?.touched && form.get('email')?.invalid) {
+        <span class="field-error">Enter a valid email.</span>
+      }
+    </label>
+
+    <label>
+      Password
+      <input type="password" formControlName="password" placeholder="At least 8 characters" />
+      @if (form.get('password')?.touched && form.get('password')?.invalid) {
+        <span class="field-error">Password must be at least 8 characters.</span>
+      }
+    </label>
+
+    <button type="submit" [disabled]="form.invalid || isLoading()">
+      {{ isLoading() ? 'Creating account...' : 'Create Account' }}
+    </button>
+
+    <p class="switch-link">Already have an account? <a routerLink="/login">Sign In</a></p>
+  </form>
+</div>

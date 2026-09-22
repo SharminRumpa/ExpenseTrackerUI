@@ -1,0 +1,43 @@
+<div class="page-header">
+  <h1>{{ isEditMode() ? 'Edit Expense' : 'Add Expense' }}</h1>
+</div>
+
+<div class="panel form-panel">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <label>
+      Category
+      <select formControlName="categoryId">
+        <option [ngValue]="null" disabled>Select a category</option>
+        @for (cat of categories(); track cat.id) {
+          <option [ngValue]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Amount
+      <input type="number" step="0.01" formControlName="amount" placeholder="0.00" />
+    </label>
+
+    <label>
+      Description (optional)
+      <input type="text" formControlName="description" placeholder="e.g. Lunch with team" />
+    </label>
+
+    <label>
+      Date
+      <input type="date" formControlName="expenseDate" />
+    </label>
+
+    <div class="form-actions">
+      <a routerLink="/expenses" class="btn-secondary">Cancel</a>
+      <button type="submit" class="btn-primary" [disabled]="form.invalid || isLoading()">
+        {{ isLoading() ? 'Saving...' : (isEditMode() ? 'Save Changes' : 'Add Expense') }}
+      </button>
+    </div>
+  </form>
+</div>
